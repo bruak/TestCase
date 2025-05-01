@@ -1,0 +1,12 @@
+
+services:
+  server:
+    container_name: prodServer
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
