@@ -1,2 +1,8 @@
 flask
 pyjwt
+flask_sqlalchemy
+requests
+flask-socketio
+eventlet
+pyopenssl
+python-dotenv
