@@ -74,7 +74,6 @@ def token_required(f):
 JWT_EXPIRATION_DELTA = timedelta(hours=24)
 
 
-
 @app.route('/login-token', methods=['POST'])
 def login_token():
     data = request.get_json()

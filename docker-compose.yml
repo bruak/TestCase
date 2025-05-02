@@ -5,8 +5,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "5000:5000"  # For HTTPS access
-      - "5001:5001"  # For HTTP access
+      - "5000:5000"
     environment:
       - PYTHONUNBUFFERED=1
       - FLASK_APP=app.py
