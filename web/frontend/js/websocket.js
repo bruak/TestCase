@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Başlangıçta sunucu durumunu kontrol et ve düzenli aralıklarla tekrarla
   checkServerStatus();
   // Her 1 saniyede bir sunucu durumunu kontrol et
-  statusCheckInterval = setInterval(checkServerStatus, 10000);
+  statusCheckInterval = setInterval(checkServerStatus, 100000);
 });
 
 // Sunucu durumunu kontrol eden fonksiyon
@@ -61,29 +61,40 @@ function clearLog() {
   document.getElementById("log").textContent = "";
 }
 
-function updateConnectionStatus(isConnected) {
-  const statusElem = document.getElementById("connectionStatus");
-  if (isConnected) {
-    statusElem.className = "status connected";
-    statusElem.textContent = "Status: Connected";
-  } else {
-    statusElem.className = "status disconnected";
-    statusElem.textContent = "Status: Disconnected";
-  }
-}
 
-function connectSocket() {
-  const token = document.getElementById("token").value;
-  const username = document.getElementById("username").value;
+
+function connectSocket() { // ! ITS FOR TESTING
+  let token = document.getElementById("token").value;
+  let username = document.getElementById("username").value;
   
-  if (!token) {
-    logMessage("JWT token is required", true);
-    return;
-  }
-  
-  if (!username) {
-    logMessage("Username is required", true);
-    return;
+  // If token or username is missing, use the saved token
+  if (!token || !username) {
+    // Load the predefined token and extract username
+    const tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNzQ2Mzc0NzQ5LCJpYXQiOjE3NDYyODgzNDksInVzZXJfaWQiOjEyfQ.YqymYpVWg7laFLV6Cb7c1c9V980PD2Tq0F3hU0WE4hk";
+    
+    if (!token) {
+      token = tokenValue;
+      document.getElementById("token").value = token;
+      logMessage("Using default token");
+    }
+    
+    if (!username) {
+      try {
+        // Decode token payload (2nd part of JWT)
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.username) {
+          username = payload.username;
+          document.getElementById("username").value = username;
+          logMessage(`Using username from token: ${username}`);
+        } else {
+          logMessage("Username not found in token", true);
+          return;
+        }
+      } catch (error) {
+        logMessage(`Error parsing token: ${error.message}`, true);
+        return;
+      }
+    }
   }
 
   logMessage("Connecting to WebSocket server...");
@@ -108,7 +119,6 @@ function connectSocket() {
     // Register connection events
     socket.on("connect", () => {
       logMessage("WebSocket connection established!");
-      updateConnectionStatus(true);
       updateServerStatus(true);
       
       // Register user after connection
@@ -138,12 +148,10 @@ function connectSocket() {
 
     socket.on("disconnect", () => {
       logMessage("WebSocket disconnected");
-      updateConnectionStatus(false);
     });
 
     socket.on("connect_error", (err) => {
       logMessage(`Connection error: ${err.message}`, true);
-      updateConnectionStatus(false);
     });
 
     socket.on("error", (err) => {
@@ -156,7 +164,6 @@ function connectSocket() {
     
     socket.on("force_disconnect", (data) => {
       logMessage(`Forced disconnect: ${JSON.stringify(data)}`);
-      updateConnectionStatus(false);
     });
     
     socket.on("pong_manual", (data) => {
@@ -176,41 +183,20 @@ function disconnectSocket() {
   if (socket) {
     logMessage("Disconnecting from WebSocket server...");
     socket.disconnect();
-    updateConnectionStatus(false);
   } else {
     logMessage("No active connection to disconnect", true);
   }
 }
 
 function pingServer() {
-  if (!socket || !socket.connected) {
-    logMessage("Not connected to server", true);
-    return;
-  }
-  
-  try {
+    if (!socket || !socket.connected) {
+      logMessage("Not connected to server", true);
+      return;
+    }
+    
     logMessage("Sending ping to server");
-    
-    // Ping gönderildiğinde yanıt için bir timeout başlat
-    const pingTimeout = setTimeout(() => {
-      logMessage("Ping timeout - no response from server", true);
-    }, 5000);
-    
-    // Ping olayını gönder ve yanıt bekle
-    socket.emit("ping_manual", {}, (response) => {
-      clearTimeout(pingTimeout);
-      if (response && response.success) {
-        logMessage(`Ping successful: ${JSON.stringify(response)}`);
-      } else {
-        logMessage(`Ping failed: ${JSON.stringify(response)}`, true);
-      }
-    });
-    
-    // Alternatif yanıt yöntemi (socket.on zaten mevcut)
-  } catch (error) {
-    logMessage(`Error during ping: ${error.message}`, true);
+    socket.emit("ping_manual");
   }
-}
 
 function getUserList() {
   if (!socket || !socket.connected) {
@@ -264,4 +250,29 @@ function testConnection() {
     logMessage(`Connection test failed: ${error.message}`, true);
     updateServerStatus(false);
   });
+}
+
+function savedToken() {
+    // Predefined token for user2
+    const tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNzQ2Mzc0NzQ5LCJpYXQiOjE3NDYyODgzNDksInVzZXJfaWQiOjEyfQ.YqymYpVWg7laFLV6Cb7c1c9V980PD2Tq0F3hU0WE4hk";
+    
+    // Fill the token field
+    document.getElementById("token").value = tokenValue;
+    
+    // Extract username from token and fill the username field
+    try {
+        // Decode token payload (2nd part of JWT)
+        const payload = JSON.parse(atob(tokenValue.split('.')[1]));
+        if (payload.username) {
+            document.getElementById("username").value = payload.username;
+            logMessage(`Username auto-filled from token: ${payload.username}`);
+        }
+    } catch (error) {
+        console.error("Error parsing token:", error);
+    }
+    
+    logMessage("Default token loaded automatically");
+    
+    // Automatically connect using this token
+    connectSocket();
 }

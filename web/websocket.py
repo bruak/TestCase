@@ -15,7 +15,7 @@ JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':DDD')
 connected_users = {}
 
 # Maksimum eşzamanlı bağlantı sınırı
-MAX_CONNECTIONS = 1
+MAX_CONNECTIONS = 2
 
 # Kalan bağlantı sayısını hesapla
 def get_remaining_slots():
