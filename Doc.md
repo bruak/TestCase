@@ -77,9 +77,12 @@ Bu değişiklikler uygulamanızı daha güvenli hale getirecek ve sorunları dah
 TODO
 loglar alınacak 
 docker secret kullanılabilir
-SSL ileride problem yaratır mı o kontrol edilecek.
-
-
+.......
+kalan kullanıcı listesi konulacak veriler tamamen backend'den çekilecek her türlü durum testti yapılacak.
+butonlar çalışır hale getirilecek.
+bir süre sonra websocket ping yanıtına muhtemelen cevap göndermediği için kapanıyor.
+websocket.py çok karştı
+.......
 
 GitHub Copilot: # Flask WebSocket Uygulaması Teknik Dokümantasyonu
 

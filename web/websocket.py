@@ -14,6 +14,13 @@ JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':DDD')
 # Global olarak connected_users tanımla
 connected_users = {}
 
+# Maksimum eşzamanlı bağlantı sınırı
+MAX_CONNECTIONS = 1
+
+# Kalan bağlantı sayısını hesapla
+def get_remaining_slots():
+    return max(0, MAX_CONNECTIONS - len(connected_users))
+
 def authenticated_only(f):
     @wraps(f)
     def wrapped(*args, **kwargs):
@@ -54,10 +61,39 @@ def authenticated_only(f):
         return f(*args, **kwargs)
     return wrapped
 
+def update_remaining_slots(socketio_instance=None):
+    """
+    Kalan bağlantı hakkını hesaplar ve tüm istemcilere yayınlar
+    """
+    try:
+        count = len(connected_users)
+        remaining_slots = get_remaining_slots()
+        print(f"Broadcasting remaining slots: {remaining_slots}, max: {MAX_CONNECTIONS}, current: {count}")
+        
+        # socketio_instance parametresi kontrol edilir
+        if socketio_instance is None:
+            # websocket_init içinden çağrıldığında kullanılacak
+            if 'socketio' in globals():
+                socketio_instance = globals()['socketio']
+            else:
+                print("Warning: socketio not available yet")
+                return
+        
+        # Tüm bağlı kullanıcılara kalan bağlantı bilgisini gönder
+        socketio_instance.emit('connection_slots', {
+            'count': count,
+            'remaining_slots': remaining_slots,
+            'max_connections': MAX_CONNECTIONS
+        }, namespace='/')
+        
+        print(f"Remaining slots broadcast completed")
+    except Exception as e:
+        print(f"Error broadcasting remaining slots: {str(e)}")
+
 def websocket_init():
     socketio = SocketIO(
         app, 
-        cors_allowed_origins="*",
+        cors_allowed_origins=["https://localhost:5000", "https://127.0.0.1:5000"],
         cors_credentials=True,  
         engineio_logger=True,
         logger=True,
@@ -72,6 +108,9 @@ def websocket_init():
     def handle_connect():
         print(f"NEW CLIENT CONNECTED: {request.sid}")
         emit('response', {'message': 'WEBSOCKET CONNECTED'})
+        
+        # Yeni bağlantı geldiğinde kalan bağlantı hakkını güncelle
+        update_remaining_slots(socketio)
     
     # connected_users global değişkenini kullan
     global connected_users
@@ -79,11 +118,16 @@ def websocket_init():
     # Anlık kullanıcı sayısını güncelleme ve yayınlama
     def update_user_count():
         count = len(connected_users)
-        print(f"Updating user count: {count}")
+        remaining_slots = get_remaining_slots()
+        print(f"Updating user count: {count}, remaining slots: {remaining_slots}")
         try:
             print(f"Current users: {connected_users}")
             print(f"Broadcasting user count: {count} to all connected clients")
-            socketio.emit('user_count', {'count': count}, namespace='/')
+            socketio.emit('user_count', {
+                'count': count, 
+                'remaining_slots': remaining_slots,
+                'max_connections': MAX_CONNECTIONS
+            }, namespace='/')
             print(f"User count broadcast completed")
         except Exception as e:
             print(f"Error broadcasting user count: {str(e)}")
@@ -137,6 +181,13 @@ def websocket_init():
                 
             session_id = request.sid  # Socket ID
             
+            # Bağlantı sınırı kontrolü
+            if user_id not in connected_users and len(connected_users) >= MAX_CONNECTIONS:
+                print(f"Connection limit reached ({MAX_CONNECTIONS}). Rejecting connection from {user_id}")
+                emit('response', {'message': f'Connection limit reached. Maximum {MAX_CONNECTIONS} concurrent connections allowed.'})
+                disconnect()
+                return
+            
             # Aynı kullanıcının önceki bağlantısını sonlandır
             if user_id in connected_users:
                 old_sid = connected_users[user_id]
@@ -159,6 +210,7 @@ def websocket_init():
             try:
                 socketio.emit('user_status', {'user': user_id, 'status': 'online'}, to=None)
                 update_user_count()
+                update_remaining_slots(socketio)  # Kalan bağlantı hakkını güncelle
             except Exception as e:
                 print(f"Error during status broadcast: {str(e)}")
                 
@@ -167,7 +219,7 @@ def websocket_init():
             emit('response', {'message': f'Registration error: {str(e)}'})
     
     @socketio.on('disconnect')
-    def handle_disconnect():
+    def handle_disconnect(data=None):
         global connected_users
         sid = request.sid
         print(f"Client disconnecting: SID={sid}")
@@ -198,6 +250,7 @@ def websocket_init():
         try:
             print("Updating user count after disconnect")
             update_user_count()
+            update_remaining_slots(socketio)  # Kalan bağlantı hakkını güncelle
             print("User count updated successfully after disconnect")
         except Exception as e:
             print(f"Error updating user count after disconnect: {str(e)}")
@@ -224,12 +277,27 @@ def websocket_init():
             if hasattr(socketio, 'server') and hasattr(socketio.server, 'eio') and hasattr(socketio.server.eio, 'sockets'):
                 active_sids = set(socketio.server.eio.sockets.keys())
                 print(f"Active SIDs from server: {active_sids}")
+            else:
+                print("Could not get active SIDs: socketio server structure not as expected")
+                # Aktif bağlantıları alamıyorsak, temizlik yapmayalım
+                emit('online_users', {'users': list(connected_users.keys()), 'count': len(connected_users)})
+                return
         except Exception as e:
             print(f"Error getting active sids: {str(e)}")
+            # Hata durumunda da temizlik yapmayalım
+            emit('online_users', {'users': list(connected_users.keys()), 'count': len(connected_users)})
+            return
+        
+        # Aktif SID listesi boşsa ve kullanıcı listesi boş değilse, temizlik yapmayalım
+        # Bu, server.eio.sockets yapısının beklediğimiz gibi olmadığını gösterir
+        if not active_sids and connected_users:
+            print("Warning: Active SIDs list is empty but there are connected users. Skipping cleanup.")
+            emit('online_users', {'users': list(connected_users.keys()), 'count': len(connected_users)})
+            return
         
         for user_id, sid in list(connected_users.items()):
             try:
-                if active_sids and sid not in active_sids:
+                if sid not in active_sids:
                     print(f"Found stale connection: {user_id} with SID {sid}")
                     del connected_users[user_id]
                     removed_users.append(user_id)
@@ -246,6 +314,7 @@ def websocket_init():
                     print(f"Error broadcasting offline status for {user_id}: {str(e)}")
             
             update_user_count()
+            update_remaining_slots(socketio)
         
         print(f"Current connected users after cleanup: {list(connected_users.keys())}, count: {len(connected_users)}")
         
@@ -253,11 +322,15 @@ def websocket_init():
     
     @socketio.on('get_user_count')
     def get_user_count():
-        check_connections()
-        
+        # check_connections() fonksiyonu çağrılmadan kullanıcı sayısını doğrudan döndür
         count = len(connected_users)
-        print(f"User count requested, returning: {count}")
-        emit('user_count', {'count': count})
+        remaining_slots = get_remaining_slots()
+        print(f"User count requested, returning: {count}, remaining slots: {remaining_slots}")
+        emit('user_count', {
+            'count': count,
+            'remaining_slots': remaining_slots,
+            'max_connections': MAX_CONNECTIONS
+        })
     
     @socketio.on('authenticated_message')
     @authenticated_only
@@ -271,11 +344,14 @@ def websocket_init():
         emit('response', {'message': 'Received your message', 'data': data})
     
     @socketio.on('get_online_users')
+    @authenticated_only
     def get_online_users():
-        check_connections()
-        
+        # Burada check_connections() çağrılmıyor, böylece gereksiz temizlik yapılmıyor
+        # Bunun yerine sadece kullanıcı listesini doğrudan gönderiyoruz
         online_users = list(connected_users.keys())
+        print(f"get_online_users called - returning users: {online_users}, count: {len(online_users)}")
         emit('online_users', {'users': online_users, 'count': len(online_users)})
+    get_online_users.authenticated = True
     
     @socketio.on('ping_manual')
     def handle_ping():
@@ -288,29 +364,6 @@ def websocket_init():
                 break
         
         emit('pong_manual', {'time': time.time()})
-    
-    @socketio.on('debug_connection')
-    def debug_connection():
-        sid = request.sid
-        user = None
-        
-        for user_id, session_id in list(connected_users.items()):
-            if session_id == sid:
-                user = user_id
-                break
-        
-        debug_info = {
-            'session_id': sid,
-            'user': user,
-            'remote_ip': request.remote_addr,
-            'headers': dict(request.headers),
-            'connected_users': list(connected_users.keys()),
-            'connected_users_count': len(connected_users),
-            'server_time': time.time()
-        }
-        
-        print(f"Debug info requested: {debug_info}")
-        emit('debug_info', debug_info)
     
     return socketio
 
