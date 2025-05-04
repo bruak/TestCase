@@ -103,9 +103,6 @@ def login_token():
 @token_required
 def logout(current_user):
     token = None
-    auth_header = request.headers.get('jwt_token')
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(' ')[1]
      
     if not token and request.args.get('token'):
      token = request.args.get('token')

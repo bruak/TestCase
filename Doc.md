@@ -104,278 +104,328 @@ SONUÇ: Token doğru şekilde revoke edilir fakat user hala aktif olarak bağlı
 TEST SENARYO: 5 kişilik hak var ve 5 kişi bağlandı bu durumda bağlanan 6. kişi
 .......
 
-GitHub Copilot: # Flask WebSocket Uygulaması Teknik Dokümantasyonu
+bruak: #codebase analyse all the code and make a detailed documentation. auth.py, app.py, wesocket.py - frontend files.
 
-Bu dokümantasyon, JWT (JSON Web Tokens) tabanlı kimlik doğrulama ile güvenli bir WebSocket uygulamasının teknik detaylarını ve mimarisini açıklamaktadır.
+GitHub Copilot: # Flask WebSocket Application Documentation
 
-## İçindekiler
+This documentation provides a comprehensive overview of the Flask WebSocket application with JWT authentication, analyzing the core components including auth.py, app.py, websocket.py, and frontend files.
 
-1. Genel Mimari
-2. Güvenlik Bileşenleri
-3. API Endpoints
-4. WebSocket Akışı
-5. Kimlik Doğrulama Süreci
-6. Docker Konteyneri
-7. Güvenlik En İyi Uygulamaları
+## 1. System Architecture
 
-## Genel Mimari
-
-Uygulama, şu temel bileşenlerden oluşmaktadır:
+The application implements a real-time WebSocket communication system with secure authentication:
 
 ```
-+--------------------------+
-|         Flask App        |
-+--------------------------+
-|                          |
-|  +------------------+    |
-|  |      Auth        |    |
-|  | (JWT Validation) |    |
-|  +------------------+    |
-|                          |
-|  +------------------+    |
-|  |     WebSocket    |    |
-|  |   (SocketIO)     |    |
-|  +------------------+    |
-|                          |
-|  +------------------+    |
-|  |    Database      |    |
-|  |    (SQLite)      |    |
-|  +------------------+    |
-|                          |
-+--------------------------+
++------------------------+            +------------------------+
+|                        |            |                        |
+|     Client Browser     |            |    Flask Server        |
+|                        |            |                        |
+|  +------------------+  |  HTTPS/WSS |  +------------------+  |
+|  |                  |  |<---------->|  |                  |  |
+|  |  Frontend        |  |            |  |  App.py          |  |
+|  |  - HTML          |  |            |  |  - Routes        |  |
+|  |  - JavaScript    |  |            |  |  - Config        |  |
+|  |  - CSS           |  |            |  |                  |  |
+|  +------------------+  |            |  +------------------+  |
+|          |             |            |          |             |
+|          v             |            |          v             |
+|  +------------------+  |            |  +------------------+  |
+|  |                  |  |            |  |                  |  |
+|  |  WebSocket.js    |  |<---------->|  |  WebSocket.py    |  |
+|  |  - Socket.IO     |  |   Events   |  |  - Socket.IO     |  |
+|  |  - Connection    |  |            |  |  - User Tracking |  |
+|  |    Management    |  |            |  |  - Authentication|  |
+|  +------------------+  |            |  +------------------+  |
+|                        |            |          |             |
+|                        |            |          v             |
+|                        |            |  +------------------+  |
+|                        |            |  |                  |  |
+|                        |            |  |  Auth.py         |  |
+|                        |            |  |  - JWT           |  |
+|                        |            |  |  - Token Mgmt    |  |
+|                        |            |  |  - Validation    |  |
+|                        |            |  +------------------+  |
+|                        |            |          |             |
+|                        |            |          v             |
+|                        |            |  +------------------+  |
+|                        |            |  |                  |  |
+|                        |            |  |  DB.py           |  |
+|                        |            |  |  - SQLite        |  |
+|                        |            |  |  - User Model    |  |
+|                        |            |  |                  |  |
+|                        |            |  +------------------+  |
++------------------------+            +------------------------+
 ```
 
-Sistem, HTTPS üzerinden güvenli bağlantı sağlayan bir Flask uygulamasıdır. Uygulama, JWT tabanlı kimlik doğrulama ile korunan WebSocket (Socket.IO) bağlantılarını destekler. Kullanıcı verileri SQLite veritabanında saklanır.
+## 2. Authentication System (auth.py)
 
-## Dosya Yapısı ve Açıklamaları
+The authentication system uses JWT (JSON Web Tokens) to secure both REST API and WebSocket connections.
 
-- createapp.py - Flask uygulamasını oluşturur
-- db.py - SQLite veritabanı bağlantısını ve kullanıcı modelini yönetir
-- auth.py - JWT tabanlı kimlik doğrulama ve token yönetimini içerir
-- websocket.py - SocketIO bağlantılarını ve olaylarını yönetir
-- app.py - Ana uygulama dosyası, tüm bileşenleri birleştirir ve HTTPS ile başlatır
-- websockettest.html - WebSocket bağlantılarını test etmek için kullanıcı arayüzü
+### Key Components:
 
-## Güvenlik Bileşenleri
-
-### HTTPS (SSL/TLS)
-
-Uygulama, güvenli iletişim için HTTPS protokolünü kullanır. Self-signed sertifika otomatik olarak üretilir.
-
+#### 2.1 JWT Configuration
 ```python
-# app.py içinden
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':D')
+JWT_EXPIRATION_DELTA = timedelta(hours=24)
+```
+
+#### 2.2 Token Management
+```python
+BLACKLISTED_TOKENS = set()  # Tracks revoked tokens
+USER_TOKENS = {}  # Maps usernames to active tokens
+```
+
+#### 2.3 Core Authentication Functions
+
+- **Token Blacklisting**: Prevents usage of logged-out tokens
+  ```python
+  def is_token_blacklisted(token):
+      return token in BLACKLISTED_TOKENS
+  
+  def add_token_to_blacklist(token):
+      BLACKLISTED_TOKENS.add(token)
+      return True
+  ```
+
+- **One Token Per User Policy**: Invalidates old tokens on new login
+  ```python
+  def invalidate_user_tokens(username):
+      if username in USER_TOKENS:
+          old_token = USER_TOKENS[username]
+          if old_token:
+              add_token_to_blacklist(old_token)
+      return True
+  ```
+
+- **Protected Route Decorator**: Middleware for route protection
+  ```python
+  @token_required
+  def protected_route(current_user):
+      # Only accessible with valid token
+  ```
+
+#### 2.4 Authentication Endpoints
+
+- **Login**: Generates JWT token for validated users
+  ```python
+  @app.route('/login-token', methods=['POST'])
+  def login_token():
+      # Validates credentials and returns JWT token
+  ```
+
+- **Logout**: Invalidates the user's JWT token
+  ```python
+  @app.route('/logout', methods=['POST'])
+  @token_required
+  def logout(current_user):
+      # Invalidates the token
+  ```
+
+#### 2.5 Security Features
+
+- Token expiration (24 hours)
+- Blacklisting to revoke tokens immediately
+- Single active token per user
+- Comprehensive error handling for various token validation failures
+
+## 3. Application Core (app.py)
+
+The main application file ties together all components and configures the Flask server.
+
+### Key Components:
+
+#### 3.1 Application Setup
+```python
+app = create_app()  # Creates Flask app with SQLite configuration
+app.static_folder = None  # Custom static file handling
+```
+
+#### 3.2 Route Configuration
+```python
+@app.route('/frontend/<path:path>')  # Serves frontend assets
+@app.route('/', methods=['GET'])     # Serves login page
+@app.route('/socket', methods=['GET'])  # Protected WebSocket test page
+@token_required
+def serve_testpage(current_user):
+    return send_from_directory('.', 'frontend/html/websockettest.html')
+```
+
+#### 3.3 HTTPS Configuration
+```python
 socketio.run(app, host='0.0.0.0', port=5000, debug=True, 
             certfile=cert_path, keyfile=key_path)
 ```
 
-### JWT (JSON Web Tokens)
-
-Kullanıcı kimlik doğrulaması JWT kullanılarak gerçekleştirilir:
-
+#### 3.4 Environment Configuration
 ```python
-# auth.py içinden
-token_payload = {
-    'username': username,
-    'exp': datetime.now(timezone.utc) + JWT_EXPIRATION_DELTA,
-    'iat': datetime.now(timezone.utc),
-    'user_id': user_id,
-}
-token = jwt.encode(token_payload, JWT_SECRET_KEY, algorithm="HS256")
+dotenv_path = find_dotenv(usecwd=True)
+if dotenv_path:
+    print(f".env file found at: {dotenv_path} ✓ ")
+    # Load environment variables
 ```
 
-JWT güvenlik özellikleri:
-- Son kullanma tarihi (expiration time) kontrolü
-- Token blacklist mekanizması
-- Kullanıcı bazlı token yönetimi (oturum başına bir token)
-- Token içeriğinin doğrulanması
+## 4. WebSocket Implementation (websocket.py)
 
-## API Endpoints
+The WebSocket implementation handles real-time communication with authenticated clients.
 
-| Endpoint | Metod | Açıklama | Yetkilendirme Gerekli |
-|----------|-------|----------|----------------------|
-| `/` | GET | WebSocket test sayfası | Hayır |
-| `/register` | POST | Yeni kullanıcı kaydı oluşturma | Hayır |
-| `/login-token` | POST | Kullanıcı giriş ve JWT token alma | Hayır |
-| `/logout` | POST | Kullanıcı çıkışı (token geçersizleştirme) | Evet |
-| `/protected` | GET | Test amaçlı korumalı endpoint | Evet |
-| `/users` | GET | Tüm kullanıcıları listeler (test amaçlı) | Hayır |
+### Key Components:
 
-### `/register` Endpoint
-
-Yeni kullanıcı kaydı için:
-
-```json
-// POST /register
-{
-  "username": "testuser",
-  "password": "securepassword123"
-}
-```
-
-### `/login-token` Endpoint
-
-Kullanıcı girişi ve JWT token almak için:
-
-```json
-// POST /login-token
-{
-  "username": "testuser",
-  "password": "securepassword123"
-}
-```
-
-Başarılı yanıt:
-
-```json
-{
-  "token": "eyJhbGc...",
-  "user": {
-    "username": "testuser",
-    "user_id": 1
-  },
-  "expires_in": 86400,
-  "message": "Login successful"
-}
-```
-
-## WebSocket Akışı
-
-```
-+-------------------+                 +-------------------+
-|                   |  1. HTTP Login  |                   |
-|      Client       +---------------->+      Server       |
-|                   |                 |                   |
-+-------------------+                 +-------------------+
-         |                                      |
-         | 2. JWT Token                         |
-         |                                      |
-         v                                      |
-+-------------------+                 +-------------------+
-|                   |  3. WebSocket   |                   |
-|      Browser      +---------------->+   SocketIO Server |
-|                   |  Connection     |                   |
-+-------------------+                 +-------------------+
-         |                                      |
-         | 4. Send register_user event          |
-         | with token + username                |
-         v                                      v
-+-------------------+                 +-------------------+
-|                   |  5. Validation  |                   |
-|     WebSocket     |<----------------+   JWT Validator   |
-|      Client       |                 |                   |
-+-------------------+                 +-------------------+
-         |                                      |
-         | 6. Real-time Communication           |
-         |                                      |
-         v                                      v
-+-------------------+                 +-------------------+
-|                   |  Broadcasting   |                   |
-|    Client Events  |<--------------->+    Server Events  |
-|                   |  Event Handling |                   |
-+-------------------+                 +-------------------+
-```
-
-### WebSocket Olayları (Events)
-
-| Olay Adı | Yön | Açıklama |
-|----------|-----|----------|
-| `connect` | Client ← Server | Bağlantı kurulduğunda |
-| `register_user` | Client → Server | Kullanıcı kaydı (token ile) |
-| `message` | Client ↔ Server | Genel mesaj gönderimi |
-| `authenticated_message` | Client ↔ Server | Sadece kimlik doğrulaması yapılmış kullanıcılar için |
-| `ping_manual` | Client → Server | Manuel ping/pong kontrolü |
-| `debug_connection` | Client → Server | Bağlantı bilgilerini almak için |
-| `get_online_users` | Client → Server | Çevrimiçi kullanıcıları almak için |
-| `user_status` | Client ← Server | Kullanıcı durumu değişikliği (online/offline) |
-| `user_count` | Client ← Server | Bağlı kullanıcı sayısı |
-| `check_connections` | Client → Server | Bağlantı kontrolü ve temizliği |
-| `disconnect` | Client ↔ Server | Bağlantı kesildiğinde |
-
-## Kimlik Doğrulama Süreci
-
-1. Kullanıcı `/login-token` endpoint'ine kullanıcı adı ve şifre gönderir
-2. Şifre doğrulaması başarılıysa sunucu JWT token üretir 
-3. Client bu token'ı WebSocket bağlantısı için kullanır
-4. WebSocket bağlantısı kurulduktan sonra `register_user` olayıyla token ve kullanıcı adı gönderilir
-5. Sunucu token'ı doğrular ve kullanıcıyı bağlı kullanıcılar listesine ekler
-6. Token geçersiz veya süresi dolmuşsa bağlantı kesilir
-
-### Token Doğrulama
-
+#### 4.1 Connection Configuration
 ```python
-# JWT token doğrulama süreci
-try:
-    # Token blacklist kontrolü
-    if is_token_blacklisted(token):
-        emit('response', {'message': 'Token has been revoked!'})
-        disconnect()
-        return False
-        
-    # Decode the JWT token
-    jwt_data = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
-    
-    # İçerik doğrulama kontrolü
-    if jwt_data.get('username') != user_id:
-        emit('response', {'message': 'Token username mismatch!'})
-        return
-        
-except jwt.ExpiredSignatureError:
-    emit('response', {'message': 'Token has expired!'})
-    return
-except jwt.InvalidTokenError:
-    emit('response', {'message': 'Invalid token!'})
-    return
+socketio = SocketIO(
+    app, 
+    cors_allowed_origins=["https://localhost:5000", "https://127.0.0.1:5000"],
+    cors_credentials=True,  
+    engineio_logger=True,
+    logger=True,
+    ping_timeout=120,      
+    ping_interval=25,      
+    async_mode='eventlet',  
+    max_http_buffer_size=1e8,    
+    always_connect=True,         
+)
 ```
 
-### Token Blacklist Mekanizması
-
-Sistem, çıkış yapan kullanıcıların token'larını blacklist'e ekleyerek güvenliği artırır:
-
+#### 4.2 Connection Management
 ```python
-# Token blacklist için hafıza içi yapı
-BLACKLISTED_TOKENS = set()
-USER_TOKENS = {}  # Kullanıcı adı -> aktif token eşlemesi
-
-def invalidate_user_tokens(username):
-    """Kullanıcının eski tokenlerini geçersiz kılar"""
-    if username in USER_TOKENS:
-        old_token = USER_TOKENS[username]
-        if old_token:
-            add_token_to_blacklist(old_token)
-    return True
+connected_users = {}  # Maps usernames to session IDs
+MAX_CONNECTIONS = 3  # Maximum concurrent connections allowed
 ```
 
-## Docker Konteyneri
-
-Uygulama, Docker içinde çalışacak şekilde yapılandırılmıştır:
-
-```
-+------------------+
-|   Docker Host    |
-|                  |
-| +---------------+|
-| |   prodServer  ||
-| |               ||
-| | +-------------+|
-| | |   Flask     ||
-| | |  (HTTPS)    ||
-| | +-------------+|
-| |               ||
-| | +-------------+|
-| | | WebSocket   ||
-| | | (SocketIO)  ||
-| | +-------------+|
-| |               ||
-| | +-------------+|
-| | |  SQLite DB  ||
-| | +-------------+|
-| +---------------+|
-+------------------+
+#### 4.3 WebSocket Authentication
+```python
+def authenticated_only(f):
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        # Authenticate WebSocket events using JWT
+    return wrapped
 ```
 
-### Docker Compose Yapılandırması
+#### 4.4 WebSocket Events
+
+- **Connection**: Handles new client connections
+  ```python
+  @socketio.on('connect')
+  def handle_connect():
+      # Handles new connections and updates stats
+  ```
+
+- **User Registration**: Associates WebSocket connection with authenticated user
+  ```python
+  @socketio.on('register_user')
+  def register_user(data):
+      # Authenticates user and manages connection limits
+  ```
+
+- **Disconnection**: Cleans up when clients disconnect
+  ```python
+  @socketio.on('disconnect')
+  def handle_disconnect(data=None):
+      # Removes user from connected_users and updates stats
+  ```
+
+- **User Listing**: Provides list of online users
+  ```python
+  @socketio.on('get_online_users')
+  @authenticated_only
+  def get_online_users():
+      # Returns list of connected users
+  ```
+
+- **Ping/Pong**: Connection health check
+  ```python
+  @socketio.on('ping_manual')
+  def handle_ping():
+      # Responds with server timestamp
+  ```
+
+#### 4.5 Security Features
+
+- Connection limit enforcement (MAX_CONNECTIONS = 3)
+- JWT validation for all authenticated events
+- Detection of multiple sessions for the same user
+- Force disconnection for duplicate logins
+
+## 5. Frontend Implementation
+
+The frontend provides user interface for authentication and WebSocket testing.
+
+### 5.1 Login Page (login.html, login.js)
+
+Provides interface for user authentication:
+- Username/password input
+- Token storage in localStorage
+- Automatic redirection when already logged in
+- Error handling for authentication failures
+
+```javascript
+// Key login functionality
+function login() {
+    // Authenticates user and stores JWT token
+    fetch('https://localhost:5000/login-token', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+        localStorage.setItem('jwt_token', data.token);
+        localStorage.setItem('username', data.user.username);
+        // Redirect to WebSocket test page
+    })
+}
+```
+
+### 5.2 WebSocket Test Page (websockettest.html, websocket.js)
+
+Provides interface for testing WebSocket functionality:
+- Real-time connection status
+- User list display
+- Connection statistics
+- Command buttons for WebSocket operations
+
+```javascript
+// Key WebSocket functionality
+function connectSocket() {
+    socket = io(url, {
+        auth: { token: token },
+        transports: ["websocket"],
+        secure: true
+    });
+
+    socket.on("connect", () => {
+        // Register user with token
+        socket.emit("register_user", {
+            token: token,
+            username: username
+        });
+    });
+
+    // Handle various socket events
+    socket.on("response", (data) => { /* ... */ });
+    socket.on("user_status", (data) => { /* ... */ });
+    socket.on("connection_slots", (data) => { /* ... */ });
+    // etc.
+}
+```
+
+## 6. Security Considerations
+
+The application implements several security measures:
+
+1. **HTTPS**: All communication is encrypted with TLS
+2. **JWT Authentication**: Secures both HTTP and WebSocket connections
+3. **Token Blacklisting**: Immediately invalidates logged-out tokens
+4. **Connection Limiting**: Prevents resource exhaustion (3 concurrent connections)
+5. **Password Hashing**: Uses secure password storage (pbkdf2:sha256)
+6. **Session Management**: One active token per user, forcing old sessions to disconnect
+7. **Error Handling**: Comprehensive error handling prevents information leakage
+
+## 7. Deployment
+
+The application is containerized using Docker for easy deployment:
 
 ```yaml
+# docker-compose.yml
 services:
   server:
     container_name: prodServer
@@ -383,112 +433,26 @@ services:
     volumes:
       - .:/app
     ports:
-      - "5000:5000"  # For HTTPS access
-      - "5001:5001"  # For HTTP access
+      - "5000:5000"
     environment:
       - PYTHONUNBUFFERED=1
       - FLASK_APP=app.py
       - FLASK_ENV=development
       - EVENTLET_NO_GREENDNS=YES
-    restart: always
 ```
 
-## Kullanıcı Bağlantı Yönetimi
+## 8. Recommendations for Improvement
 
-```
-+------------------+             +------------------+
-|                  |             |                  |
-|  İstemci Tarafı  |             |   Sunucu Tarafı  |
-|                  |             |                  |
-+------------------+             +------------------+
-         |                                 |
-         | connect()                       |
-         |-------------------------------->|
-         |                                 | handle_connect()
-         |                                 |
-         | emit('register_user', data)     |
-         |-------------------------------->|
-         |                                 | register_user(data)
-         |                                 | - Token doğrulama
-         |                                 | - Kullanıcı kaydı
-         |                                 |
-         |     emit('user_status')         |
-         |<--------------------------------|
-         |                                 |
-         |     emit('user_count')          |
-         |<--------------------------------|
-         |                                 |
-         |        ...                      |
-         |                                 |
-         | disconnect()                    |
-         |-------------------------------->|
-         |                                 | handle_disconnect()
-         |                                 | - Kullanıcıyı listeden sil
-         |                                 | - Kullanıcı sayısını güncelle
-         |     emit('user_status')         |
-         |<--------------------------------|
-         |                                 |
-         |     emit('user_count')          |
-         |<--------------------------------|
-         |                                 |
-```
+1. **JWT Secret Management**: Use Azure Key Vault or another secure key management service instead of environment variables
+2. **Structured Logging**: Implement the logging system outlined in Doc.md
+3. **Rate Limiting**: Add rate limiting for authentication endpoints
+4. **User Authentication Audit Trail**: Track login/logout events
+5. **Token Refresh Mechanism**: Implement token refresh to extend sessions without re-login
+6. **WebSocket Connection Cleanup**: Add periodic cleanup of stale connections
+7. **HTTPS Certificate Management**: Use proper certificates instead of self-signed
 
-Sistem aşağıdaki işlemleri yönetir:
-- Kullanıcı bağlantı/kayıt işlemleri
-- Kullanıcı sayısı takibi ve yayını
-- Kullanıcı durumu değişiklikleri (online/offline)
-- Bağlantı kesme işlemi ve temizlik
+## Summary
 
-## Güvenlik En İyi Uygulamaları
+This Flask application demonstrates a complete implementation of secure WebSocket communication with JWT authentication. It includes proper user management, connection limiting, and a user-friendly test interface. The architecture supports real-time communication while maintaining security best practices.
 
-1. **HTTPS Kullanımı**: Tüm iletişim HTTPS üzerinden şifrelenir.
-2. **JWT Token Güvenliği**:
-   - Sınırlı ömür (24 saat)
-   - Token blacklist mekanizması
-   - Kullanıcı başına bir aktif token
-3. **Şifre Güvenliği**:
-   - Şifreler hash'lenerek saklanır (pbkdf2:sha256)
-   - Şifre doğrulaması güvenli fonksiyonlarla yapılır
-4. **Ortam Değişkenleri**:
-   - JWT_SECRET_KEY gibi hassas veriler ortam değişkenlerinden alınır
-5. **Oturum Yönetimi**:
-   - Aynı kullanıcı farklı yerden giriş yaptığında eski oturum sonlandırılır
-   - Aktif olmayan bağlantılar temizlenir
-
-## WebSocket Test Arayüzü
-
-```
-+----------------------------------+
-|      WebSocket JWT Test          |
-+----------------------------------+
-|                                  |
-| [Connection] [Testing] [Debug]   |
-|                                  |
-| JWT Token: [----------------]    |
-| Username:  [----------------]    |
-|                                  |
-| [x] Ignore HTTPS certificate     |
-|     errors                       |
-|                                  |
-| [Connect & Register] [Disconnect]|
-|                                  |
-| Status: Connected                |
-|                                  |
-| Messages:                        |
-| [14:58:31] Connecting...         |
-| [14:58:31] Connection established|
-| [14:58:31] User registered       |
-| [14:58:31] USER COUNT: 2 online  |
-+----------------------------------+
-```
-
-Sistem, kolay test ve hata ayıklama için kapsamlı bir arayüz sunar:
-- JWT login/register işlemleri
-- WebSocket bağlantı yönetimi
-- Olayları gönderme ve alma
-- Debug bilgilerini görüntüleme
-- Kullanıcı listesi ve sayısı takibi
-
-## Sonuç
-
-Bu Flask tabanlı WebSocket uygulaması, JWT kimlik doğrulama ve HTTPS ile güvenli gerçek zamanlı iletişim sağlar. Sistem, modern web uygulamalarının ihtiyaçlarını karşılayacak şekilde tasarlanmış olup, kullanıcı yönetimi, oturum güvenliği ve WebSocket protokolü entegrasyonu için eksiksiz bir örnek teşkil etmektedir.
+Similar code found with 2 license types

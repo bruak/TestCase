@@ -163,7 +163,7 @@ function connectSocket() {
     });
 
     socket.on("response", (data) => {
-      logMessage(`YANIT: ${JSON.stringify(data)}`);
+      logMessage(`YANIT: ${JSON.stringify(data)}`);      
     });
 
     socket.on("user_status", (data) => {
