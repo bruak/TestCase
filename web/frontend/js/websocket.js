@@ -197,36 +197,16 @@ function pingServer() {
     logMessage("Sending ping to server");
     socket.emit("ping_manual");
   }
-
-function getUserList() {
-  if (!socket || !socket.connected) {
-    logMessage("Not connected to server", true);
-    return;
-  }
-  
-  try {
+  function getUserList() {
+    if (!socket || !socket.connected) {
+      logMessage("Not connected to server", true);
+      return;
+    }
+    
     logMessage("Requesting online users");
-    
-    // Kullanıcı listesi istediğinde yanıt için bir timeout başlat
-    const userListTimeout = setTimeout(() => {
-      logMessage("User list request timeout - no response from server", true);
-    }, 5000);
-    
-    // Kullanıcı listesi olayını gönder ve yanıt bekle
-    socket.emit("get_online_users", {}, (response) => {
-      clearTimeout(userListTimeout);
-      if (response && response.success) {
-        logMessage(`User list received: ${JSON.stringify(response)}`);
-      } else {
-        logMessage(`Failed to get user list: ${JSON.stringify(response)}`, true);
-      }
-    });
-    
-    // Alternatif yanıt yöntemi (socket.on zaten mevcut)
-  } catch (error) {
-    logMessage(`Error during user list request: ${error.message}`, true);
+    socket.emit("get_online_users");
   }
-}
+
 
 function testConnection() {
   const url = "https://localhost:5000";

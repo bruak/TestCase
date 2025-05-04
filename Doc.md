@@ -75,13 +75,18 @@ Bu değişiklikler uygulamanızı daha güvenli hale getirecek ve sorunları dah
 
 
 TODO
+Login kısmı yapılacak ve jwt kontrol edilecek sonrasında oto şekilde bağlantı kurulacak websocketle, blacklist gibi durumların çalışıp çalışmadığı kontrol edilecek.,
+
+.......
+
+kalan kullanıcı listesi frontend tarafında gösteilecek 
+veriler tamamen backend'den çekilecek her türlü durum testti yapılacak.
+
 loglar alınacak 
 docker secret kullanılabilir
-.......
-kalan kullanıcı listesi konulacak veriler tamamen backend'den çekilecek her türlü durum testti yapılacak.
-butonlar çalışır hale getirilecek.
-bir süre sonra websocket ping yanıtına muhtemelen cevap göndermediği için kapanıyor.
-websocket.py çok karştı
+
+
+kullanıcı çıkış yaptıktan sonra JWT token iptal edilecek, bu zaten var. Websocketi kapatınca da iptal olacak.
 .......
 
 GitHub Copilot: # Flask WebSocket Uygulaması Teknik Dokümantasyonu
