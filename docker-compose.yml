@@ -11,4 +11,4 @@ services:
       - FLASK_APP=app.py
       - FLASK_ENV=development
       - EVENTLET_NO_GREENDNS=YES
-    restart: always
+    #restart: always

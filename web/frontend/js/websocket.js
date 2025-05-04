@@ -78,6 +78,48 @@ function clearLog() {
   document.getElementById("log").textContent = "";
 }
 
+// Add these functions to update the connection statistics
+function updateConnectionStats(data) {
+  document.getElementById('remainingSlots').textContent = data.remaining_slots;
+  document.getElementById('connectionLimits').textContent = data.connection_limits;
+  document.getElementById('activeConnections').textContent = data.count;
+}
+
+function updateConnectedUsers(data) {
+  const usersContainer = document.getElementById('connectedUsers');
+  
+  usersContainer.innerHTML = '';
+  
+  let usersList = [];
+  
+  if (Array.isArray(data)) {
+    usersList = data;
+  } 
+
+  else if (data && Array.isArray(data.users)) {
+    usersList = data.users.map(username => ({ user: username, status: 'online' }));
+  }
+  
+  if (!usersList || usersList.length === 0) {
+    usersContainer.innerHTML = '<li class="empty-list">Henüz bağlı kullanıcı yok</li>';
+    return;
+  }
+  
+  usersList.forEach(user => {
+    const userItem = document.createElement('li');
+    
+    if (typeof user === 'string') {
+      userItem.classList.add('user-online');
+      userItem.textContent = user;
+    } else {
+      userItem.classList.add(user.status === 'online' ? 'user-online' : 'user-offline');
+      userItem.textContent = user.username || user.user || 'Anonim Kullanıcı';
+    }
+    
+    usersContainer.appendChild(userItem);
+  });
+}
+
 function connectSocket() {
   let token = localStorage.getItem('jwt_token');
   let username = localStorage.getItem('username');
@@ -126,6 +168,7 @@ function connectSocket() {
 
     socket.on("user_status", (data) => {
       logMessage(`KULLANICI DURUMU: ${JSON.stringify(data)}`);
+      getUserList();
     });
     
     socket.on("user_count", (data) => {
@@ -134,6 +177,7 @@ function connectSocket() {
     
     socket.on("connection_slots", (data) => {
       logMessage(`BAĞLANTI SLOTLARI: ${JSON.stringify(data)}`);
+      updateConnectionStats(data);
     });
 
     socket.on("disconnect", () => {
@@ -169,6 +213,12 @@ function connectSocket() {
     
     socket.on("online_users", (data) => {
       logMessage(`ÇEVRİMİÇİ KULLANICILAR: ${JSON.stringify(data)}`);
+      
+      updateConnectedUsers(data);
+      
+      if (data && data.hasOwnProperty('count')) {
+        logMessage(`ÇEVRİMİÇİ KULLANICI: ${data.count} kullanıcı aktif`);
+      }
     });
     
   } catch (err) {
@@ -195,16 +245,16 @@ function pingServer() {
     logMessage("Sending ping to server");
     socket.emit("ping_manual");
   }
-  function getUserList() {
-    if (!socket || !socket.connected) {
-      logMessage("Not connected to server", true);
-      return;
-    }
-    
-    logMessage("Requesting online users");
-    socket.emit("get_online_users");
+  
+function getUserList() {
+  if (!socket || !socket.connected) {
+    logMessage("Not connected to server", true);
+    return;
   }
-
+  
+  logMessage("Requesting online users");
+  socket.emit("get_online_users");
+}
 
 function testConnection() {
   const url = "https://localhost:5000";
@@ -233,7 +283,6 @@ function testConnection() {
 function logOut() {
   logMessage("Oturum kapatılıyor...");
   
-  // Token'ı localStorage'dan alalım
   const token = localStorage.getItem('jwt_token');
   
   if (!token) {
@@ -242,7 +291,6 @@ function logOut() {
     return;
   }
   
-  // Sunucuya logout isteği gönderelim
   fetch(`https://localhost:5000/logout?token=${encodeURIComponent(token)}`, {
     method: 'POST',
     headers: {

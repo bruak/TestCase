@@ -74,27 +74,34 @@ Bu değişiklikler uygulamanızı daha güvenli hale getirecek ve sorunları dah
 
 
 
+
+NOTE:
+Potansiyel bir DoS (Denial of Service) vektörü olabilir, ancak korunuyor çünkü:
+
+Tüm bağlantılar JWT doğrulamasına tabi
+Aynı kullanıcı aynı anda iki kez giriş yapmaya çalışırsa, eski oturum otomatik olarak kapatılıyor
+Toplam bağlantı sayısı MAX_CONNECTIONS ile sınırlanıyor
+
+
+en son dökümantasyon yapılırken websocket.js üzerindeki eventler izlenebilir.
+
+
+
 TODO
 
 .......
-disconnect ve logout durumlarında çıkış yapılması gerekiyor ve JWT token geçersiz olarak işaretlenmeli.
-
-kalan kullanıcı listesi frontend tarafında gösteilecek 
-veriler tamamen backend'den çekilecek her türlü durum testti yapılacak.
 
 loglar alınacak 
 docker secret kullanılabilir
 
 
-kullanıcı çıkış yaptıktan sonra JWT token iptal edilecek, bu zaten var. Websocketi kapatınca da iptal olacak.
-
-en son dökümantasyon yapılırken websocket.js üzerindeki eventler izlenebilir.
-
-
 TESTLER
-aynı kullanıcıdan girişi
-postman ile giriş ve geçersiz JWT testi.
 
+TEST SENARYO: user tarayıcıdan giriş yapar, kötü niyetli olarak JWT token verisi alınır ve postman ile disconnect atılır.
+SONUÇ: Token doğru şekilde revoke edilir fakat user hala aktif olarak bağlı gözükür ve kalan hak artmaz. kötü niyet önlenir.
+
+
+TEST SENARYO: 5 kişilik hak var ve 5 kişi bağlandı bu durumda bağlanan 6. kişi
 .......
 
 GitHub Copilot: # Flask WebSocket Uygulaması Teknik Dokümantasyonu

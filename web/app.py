@@ -5,6 +5,7 @@ import os
 from auth import token_required
 from dotenv import find_dotenv, dotenv_values
 
+# * Flask app ve DB. 
 app = create_app()
 
 app.static_folder = None
@@ -18,8 +19,6 @@ def serve_frontend(path):
 def root():
     return send_from_directory('.', 'frontend/html/login.html')
 
-
-
 @app.route('/socket', methods=['GET'])
 @token_required
 def serve_testpage(current_user):
@@ -27,7 +26,6 @@ def serve_testpage(current_user):
 
 socketio = websocket_init()  # WEBSOCKET
 
-# .env configuration check
 dotenv_path = find_dotenv(usecwd=True)
 if dotenv_path:
     print(f".env file found at: {dotenv_path} ✓ ")
@@ -49,10 +47,10 @@ if __name__ == '__main__':
         print("Starting with HTTPS support (self-signed certificate)")
         socketio.run(app, host='0.0.0.0', port=5000, debug=True, 
                     certfile=cert_path, keyfile=key_path)
-    # Uncomment if you need fallback to HTTP
-    # else:
-    #     print("SSL certificate or key not found. Running without HTTPS. CONTACT YOUR IT ADMIN")
-    #     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    # ! sertifikalarda sorun çıkarsa eğer HTTP ile başlanır.
+    else:
+        print("SSL certificate or key not found. Running without HTTPS. CONTACT YOUR IT ADMIN")
+        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
 
 
 

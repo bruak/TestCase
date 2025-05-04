@@ -13,7 +13,7 @@ JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':DDD')
 
 connected_users = {}
 
-MAX_CONNECTIONS = 2
+MAX_CONNECTIONS = 3
 
 def authenticated_only(f):
     @wraps(f)

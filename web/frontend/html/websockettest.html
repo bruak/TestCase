@@ -16,18 +16,44 @@
       </div>
     </div>
     
-      <button onclick="disconnectSocket()" style="background-color: #dc3545;">Disconnect</button>
-
-      <div class="form-group" style="margin-top: 20px;">
-        <label>Quick Commands:</label>
-        <button onclick="pingServer()">Ping Server</button>
-        <button onclick="getUserList()">Get User List</button>
-        <button onclick="clearLog()">Clear Log</button>
-        <button onclick="testConnection()">Test Connection</button>
+    <!-- New Section: Connection Statistics -->
+    <div class="connection-stats">
+      <div class="stats-panel">
+        <h3>Bağlantı Durumu</h3>
+        <div class="stat-item">
+          <span class="stat-label">Kalan Bağlantı Hakkı:</span>
+          <span id="remainingSlots">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Toplam İzin Verilen Bağlantı:</span>
+          <span id="connectionLimits">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Aktif Bağlantı Sayısı:</span>
+          <span id="activeConnections">-</span>
+        </div>
       </div>
+      
+      <div class="users-panel">
+        <h3>Bağlı Kullanıcılar</h3>
+        <ul id="connectedUsers" class="users-list">
+          <li class="empty-list">Henüz bağlı kullanıcı yok</li>
+        </ul>
+      </div>
+    </div>
+    
+    <button onclick="disconnectSocket()" style="background-color: #dc3545;">Disconnect</button>
 
-      <h3>Messages:</h3>
-      <pre id="log"></pre>    
+    <div class="form-group" style="margin-top: 20px;">
+      <label>Quick Commands:</label>
+      <button onclick="pingServer()">Ping Server</button>
+      <button onclick="getUserList()">Get User List</button>
+      <button onclick="clearLog()">Clear Log</button>
+      <button onclick="testConnection()">Test Connection</button>
+    </div>
+
+    <h3>Messages:</h3>
+    <pre id="log"></pre>    
   </div>
 
   <script src="/frontend/js/websocket.js"></script>

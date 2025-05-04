@@ -32,12 +32,6 @@ def token_required(f):
     def decorated(*args, **kwargs):
         token = None
         
-        # Check Authorization header
-        auth_header = request.headers.get('Authorization')
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
-        
-        # Check URL query parameters if token wasn't found in headers
         if not token and request.args.get('token'):
             token = request.args.get('token')
         
