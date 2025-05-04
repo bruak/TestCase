@@ -1,0 +1,688 @@
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+RIT_iOc6sksDeRvVAAAA: Received packet MESSAGE data 2["register_user",{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyNjMsImlhdCI6MTc0NjM4MTg2MywidXNlcl9pZCI6MTF9.25O-xcqLNw4_xFZq79-uToYIqs9Uv2KaZbNwJ5VZ6Pc","username":"user"}]
+received event "register_user" from pv-eqBXOTHR6ERBnAAAB [/]
+emitting event "response" to pv-eqBXOTHR6ERBnAAAB [/]
+Token decoded: {'username': 'user', 'exp': 1746468263, 'iat': 1746381863, 'user_id': 11}
+User registered: user with SID pv-eqBXOTHR6ERBnAAAB
+Current connected users: {'user': 'pv-eqBXOTHR6ERBnAAAB'}
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["response",{"message":"User user registered successfully"}]
+emitting event "user_status" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"online"}]
+emitting event "user_count" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["user_count",{"count":1,"remaining_slots":1,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":1,"remaining_slots":1,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:24] "GET /socket?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyNjMsImlhdCI6MTc0NjM4MTg2MywidXNlcl9pZCI6MTF9.25O-xcqLNw4_xFZq79-uToYIqs9Uv2KaZbNwJ5VZ6Pc HTTP/1.1" 200 1380 0.002055
+(20) accepted ('172.18.0.1', 39424)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+172.18.0.1 - - [04/May/2025 18:04:24] "GET /frontend/css/websocket.css HTTP/1.1" 200 2507 0.001398
+(20) accepted ('172.18.0.1', 39426)
+172.18.0.1 - - [04/May/2025 18:04:24] "GET /frontend/js/websocket.js HTTP/1.1" 200 8052 0.001118
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+Client disconnecting: SID=pv-eqBXOTHR6ERBnAAAB
+emitting event "response" to pv-eqBXOTHR6ERBnAAAB [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET DISCONNECTED"}]
+emitting event "user_status" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"offline"}]
+emitting event "user_count" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["user_count",{"count":0,"remaining_slots":2,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+RIT_iOc6sksDeRvVAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:24] "GET /socket.io/?EIO=4&transport=websocket HTTP/1.1" 200 0 1.631240
+172.18.0.1 - - [04/May/2025 18:04:25] "GET / HTTP/1.1" 200 1204 0.000944
+(20) accepted ('172.18.0.1', 39442)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+(20) accepted ('172.18.0.1', 39454)
+YkCc2uvqxoCLMMNaAAAC: Sending packet OPEN data {'sid': 'YkCc2uvqxoCLMMNaAAAC', 'upgrades': [], 'pingTimeout': 120000, 'pingInterval': 25000, 'maxPayload': 100000000.0}
+YkCc2uvqxoCLMMNaAAAC: Received request to upgrade to websocket
+YkCc2uvqxoCLMMNaAAAC: Upgrade to websocket successful
+YkCc2uvqxoCLMMNaAAAC: Received packet MESSAGE data 0{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyNjMsImlhdCI6MTc0NjM4MTg2MywidXNlcl9pZCI6MTF9.25O-xcqLNw4_xFZq79-uToYIqs9Uv2KaZbNwJ5VZ6Pc"}
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 0{"sid":"DpL04OfdWtnzffKjAAAD"}
+NEW CLIENT CONNECTED: DpL04OfdWtnzffKjAAAD
+emitting event "response" to DpL04OfdWtnzffKjAAAD [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET CONNECTED"}]
+emitting event "connection_slots" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+YkCc2uvqxoCLMMNaAAAC: Received packet MESSAGE data 2["register_user",{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyNjMsImlhdCI6MTc0NjM4MTg2MywidXNlcl9pZCI6MTF9.25O-xcqLNw4_xFZq79-uToYIqs9Uv2KaZbNwJ5VZ6Pc","username":"user"}]
+received event "register_user" from DpL04OfdWtnzffKjAAAD [/]
+Token decoded: {'username': 'user', 'exp': 1746468263, 'iat': 1746381863, 'user_id': 11}
+User registered: user with SID DpL04OfdWtnzffKjAAAD
+Current connected users: {'user': 'DpL04OfdWtnzffKjAAAD'}
+emitting event "response" to DpL04OfdWtnzffKjAAAD [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["response",{"message":"User user registered successfully"}]
+emitting event "user_status" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"online"}]
+emitting event "user_count" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["user_count",{"count":1,"remaining_slots":1,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":1,"remaining_slots":1,"connection_limits":2}]
+YkCc2uvqxoCLMMNaAAAC: Received packet MESSAGE data 1
+emitting event "response" to DpL04OfdWtnzffKjAAAD [/]
+Client disconnecting: SID=DpL04OfdWtnzffKjAAAD
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET DISCONNECTED"}]
+emitting event "user_status" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"offline"}]
+emitting event "user_count" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["user_count",{"count":0,"remaining_slots":2,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+YkCc2uvqxoCLMMNaAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:27] "GET /socket.io/?EIO=4&transport=websocket HTTP/1.1" 200 0 2.528095
+172.18.0.1 - - [04/May/2025 18:04:27] "POST /logout HTTP/1.1" 400 178 0.001424
+172.18.0.1 - - [04/May/2025 18:04:29] "GET / HTTP/1.1" 200 1204 0.000647
+(20) accepted ('172.18.0.1', 42730)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+172.18.0.1 - - [04/May/2025 18:04:29] "GET /frontend/css/websocket.css HTTP/1.1" 200 2507 0.000911
+(20) accepted ('172.18.0.1', 42736)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+172.18.0.1 - - [04/May/2025 18:04:29] "GET /frontend/js/login.js HTTP/1.1" 200 3037 0.000741
+172.18.0.1 - - [04/May/2025 18:04:29] "GET /frontend/js/websocket.js HTTP/1.1" 200 8052 0.001107
+172.18.0.1 - - [04/May/2025 18:04:29] "GET / HTTP/1.1" 200 1204 0.000646
+ * Detected change in '/app/web/auth.py', reloading
+ * Restarting with stat
+Server initialized for eventlet.
+.env file found at: /app/.env ✓ 
+Found 1 environment variables
+JWT_SECRET_KEY is set ✓ 
+Starting with HTTPS support (self-signed certificate)
+ * Debugger is active!
+ * Debugger PIN: 135-509-575
+(22) wsgi starting up on https://0.0.0.0:5000
+(22) accepted ('172.18.0.1', 44272)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 8
+(22) accepted ('172.18.0.1', 44278)
+172.18.0.1 - - [04/May/2025 18:04:55] "POST /login-token HTTP/1.1" 200 435 0.343536
+(22) accepted ('172.18.0.1', 44294)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+(22) accepted ('172.18.0.1', 44306)
+i25MVqNXZCUdhQMXAAAA: Sending packet OPEN data {'sid': 'i25MVqNXZCUdhQMXAAAA', 'upgrades': [], 'pingTimeout': 120000, 'pingInterval': 25000, 'maxPayload': 100000000.0}
+i25MVqNXZCUdhQMXAAAA: Received request to upgrade to websocket
+i25MVqNXZCUdhQMXAAAA: Upgrade to websocket successful
+i25MVqNXZCUdhQMXAAAA: Received packet MESSAGE data 0{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyOTUsImlhdCI6MTc0NjM4MTg5NSwidXNlcl9pZCI6MTF9.woABzI_BGbEwsHU9ppfWmhpBdewLdFbiwfZzzI4HWvE"}
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 0{"sid":"HYJs5wo7NEmp6kAaAAAB"}
+NEW CLIENT CONNECTED: HYJs5wo7NEmp6kAaAAAB
+emitting event "response" to HYJs5wo7NEmp6kAaAAAB [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET CONNECTED"}]
+emitting event "connection_slots" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+i25MVqNXZCUdhQMXAAAA: Received packet MESSAGE data 2["register_user",{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyOTUsImlhdCI6MTc0NjM4MTg5NSwidXNlcl9pZCI6MTF9.woABzI_BGbEwsHU9ppfWmhpBdewLdFbiwfZzzI4HWvE","username":"user"}]
+received event "register_user" from HYJs5wo7NEmp6kAaAAAB [/]
+emitting event "response" to HYJs5wo7NEmp6kAaAAAB [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["response",{"message":"User user registered successfully"}]
+Token decoded: {'username': 'user', 'exp': 1746468295, 'iat': 1746381895, 'user_id': 11}
+User registered: user with SID HYJs5wo7NEmp6kAaAAAB
+Current connected users: {'user': 'HYJs5wo7NEmp6kAaAAAB'}
+emitting event "user_status" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"online"}]
+emitting event "user_count" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["user_count",{"count":1,"remaining_slots":1,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":1,"remaining_slots":1,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:56] "GET /socket?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyOTUsImlhdCI6MTc0NjM4MTg5NSwidXNlcl9pZCI6MTF9.woABzI_BGbEwsHU9ppfWmhpBdewLdFbiwfZzzI4HWvE HTTP/1.1" 200 1380 0.001925
+(22) accepted ('172.18.0.1', 44314)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+172.18.0.1 - - [04/May/2025 18:04:56] "GET /frontend/css/websocket.css HTTP/1.1" 200 2507 0.001064
+(22) accepted ('172.18.0.1', 43280)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+172.18.0.1 - - [04/May/2025 18:04:56] "GET /frontend/js/websocket.js HTTP/1.1" 304 211 0.000869
+172.18.0.1 - - [04/May/2025 18:04:57] "GET / HTTP/1.1" 200 1204 0.000928
+(22) accepted ('172.18.0.1', 43296)
+Client disconnecting: SID=HYJs5wo7NEmp6kAaAAAB
+emitting event "response" to HYJs5wo7NEmp6kAaAAAB [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET DISCONNECTED"}]
+emitting event "user_status" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"offline"}]
+emitting event "user_count" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["user_count",{"count":0,"remaining_slots":2,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+i25MVqNXZCUdhQMXAAAA: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:57] "GET /socket.io/?EIO=4&transport=websocket HTTP/1.1" 200 0 1.686714
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+(22) accepted ('172.18.0.1', 43302)
+jknpT8PyEnjJtzdIAAAC: Sending packet OPEN data {'sid': 'jknpT8PyEnjJtzdIAAAC', 'upgrades': [], 'pingTimeout': 120000, 'pingInterval': 25000, 'maxPayload': 100000000.0}
+jknpT8PyEnjJtzdIAAAC: Received request to upgrade to websocket
+jknpT8PyEnjJtzdIAAAC: Upgrade to websocket successful
+jknpT8PyEnjJtzdIAAAC: Received packet MESSAGE data 0{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyOTUsImlhdCI6MTc0NjM4MTg5NSwidXNlcl9pZCI6MTF9.woABzI_BGbEwsHU9ppfWmhpBdewLdFbiwfZzzI4HWvE"}
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 0{"sid":"fU9erTKYfi5q-1R1AAAD"}
+NEW CLIENT CONNECTED: fU9erTKYfi5q-1R1AAAD
+emitting event "response" to fU9erTKYfi5q-1R1AAAD [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET CONNECTED"}]
+emitting event "connection_slots" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+jknpT8PyEnjJtzdIAAAC: Received packet MESSAGE data 2["register_user",{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJleHAiOjE3NDY0NjgyOTUsImlhdCI6MTc0NjM4MTg5NSwidXNlcl9pZCI6MTF9.woABzI_BGbEwsHU9ppfWmhpBdewLdFbiwfZzzI4HWvE","username":"user"}]
+received event "register_user" from fU9erTKYfi5q-1R1AAAD [/]
+Token decoded: {'username': 'user', 'exp': 1746468295, 'iat': 1746381895, 'user_id': 11}
+User registered: user with SID fU9erTKYfi5q-1R1AAAD
+Current connected users: {'user': 'fU9erTKYfi5q-1R1AAAD'}
+emitting event "response" to fU9erTKYfi5q-1R1AAAD [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["response",{"message":"User user registered successfully"}]
+emitting event "user_status" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"online"}]
+emitting event "user_count" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["user_count",{"count":1,"remaining_slots":1,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":1,"remaining_slots":1,"connection_limits":2}]
+jknpT8PyEnjJtzdIAAAC: Received packet MESSAGE data 1
+emitting event "response" to fU9erTKYfi5q-1R1AAAD [/]
+Client disconnecting: SID=fU9erTKYfi5q-1R1AAAD
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["response",{"message":"WEBSOCKET DISCONNECTED"}]
+emitting event "user_status" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["user_status",{"user":"user","status":"offline"}]
+emitting event "user_count" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["user_count",{"count":0,"remaining_slots":2,"max_connections":2}]
+emitting event "connection_slots" to all [/]
+jknpT8PyEnjJtzdIAAAC: Sending packet MESSAGE data 2["connection_slots",{"count":0,"remaining_slots":2,"connection_limits":2}]
+172.18.0.1 - - [04/May/2025 18:04:59] "GET /socket.io/?EIO=4&transport=websocket HTTP/1.1" 200 0 1.847858
+172.18.0.1 - - [04/May/2025 18:04:59] "POST /logout HTTP/1.1" 400 178 0.001287
+172.18.0.1 - - [04/May/2025 18:05:01] "GET / HTTP/1.1" 200 1204 0.000637
+(22) accepted ('172.18.0.1', 43312)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+172.18.0.1 - - [04/May/2025 18:05:01] "GET /frontend/css/websocket.css HTTP/1.1" 200 2507 0.000962
+(22) accepted ('172.18.0.1', 43320)
+(22) accepted ('172.18.0.1', 43330)
+172.18.0.1 - - [04/May/2025 18:05:01] "GET /frontend/js/login.js HTTP/1.1" 304 207 0.000795
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 9
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/eventlet/hubs/poll.py", line 111, in wait
+    listener.cb(fileno)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/greenthread.py", line 272, in main
+    result = function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 905, in process_request
+    self.protocol(conn_state, self)
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 363, in __init__
+    self.handle()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 396, in handle
+    self.handle_one_request()
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 432, in handle_one_request
+    self.raw_requestline = self._read_request_line()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/wsgi.py", line 413, in _read_request_line
+    line = self.rfile.readline(self.server.url_length_limit)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/socket.py", line 718, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 265, in recv_into
+    return self._base_recv(nbytes, flags, into=True, buffer_=buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 280, in _base_recv
+    read = self.read(nbytes, buffer_)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 196, in read
+    return self._call_trampolining(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/eventlet/green/ssl.py", line 166, in _call_trampolining
+    return func(*a, **kw)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/ssl.py", line 1166, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: SSLV3_ALERT_CERTIFICATE_UNKNOWN] sslv3 alert certificate unknown (_ssl.c:2590)
+Removing descriptor: 10
+172.18.0.1 - - [04/May/2025 18:05:01] "GET /frontend/js/websocket.js HTTP/1.1" 304 211 0.000715
+172.18.0.1 - - [04/May/2025 18:05:01] "GET / HTTP/1.1" 200 1204 0.000701
+172.18.0.1 - - [04/May/2025 18:05:06] "GET / HTTP/1.1" 200 1204 0.000567
+ * Detected change in '/app/web/auth.py', reloading
+ * Restarting with stat
+Server initialized for eventlet.
+.env file found at: /app/.env ✓ 
+Found 1 environment variables
+JWT_SECRET_KEY is set ✓ 
+Starting with HTTPS support (self-signed certificate)
+ * Debugger is active!
+ * Debugger PIN: 135-509-575
+(24) wsgi starting up on https://0.0.0.0:5000
+ * Detected change in '/app/web/auth.py', reloading
+ * Restarting with stat
+Server initialized for eventlet.
+.env file found at: /app/.env ✓ 
+Found 1 environment variables
+JWT_SECRET_KEY is set ✓ 
+Starting with HTTPS support (self-signed certificate)
+ * Debugger is active!
+ * Debugger PIN: 135-509-575
+(26) wsgi starting up on https://0.0.0.0:5000

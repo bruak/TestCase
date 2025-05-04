@@ -1,15 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    checkServerStatus();
     
     const token = localStorage.getItem('jwt_token');
     const username = localStorage.getItem('username');
     
-    if (token && username) {
-        logMessage("Aktif oturumunuz bulunuyor, WebSocket Test sayfasına yönlendiriliyorsunuz...");
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 1500);
-    }
+    //if (token && username) {
+    //    showMessage("Aktif oturumunuz bulunuyor, WebSocket Test sayfasına yönlendiriliyorsunuz...");
+    //    setTimeout(() => {
+    //        window.location.href = '/socket';
+    //    }, 1500);
+    //}
     
     document.getElementById('password').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -52,19 +51,24 @@ function login() {
         localStorage.setItem('jwt_token', data.token);
         localStorage.setItem('username', data.user.username);
         localStorage.setItem('user_id', data.user.user_id);
+
+        localStorage.setItem('socket_connect_flag', 'true');
         
-        document.getElementById('logSection').style.display = 'block';
-        logMessage(`Giriş başarılı: ${data.message}`);
-        logMessage(`Kullanıcı: ${data.user.username}`);
-        logMessage(`Token geçerlilik süresi: ${data.expires_in} saniye`);
+        showMessage(`Token geçerlilik süresi: ${data.expires_in} saniye (24 saat)`);
+
+        if (typeof connectSocket === "function") {
+            connectSocket();
+        }
         
         setTimeout(() => {
-            window.location.href = '/';
+            // Add token as a URL parameter
+            const token = localStorage.getItem('jwt_token');
+            window.location.href = `/socket?token=${encodeURIComponent(token)}`;
         }, 1500);
     })
     .catch(error => {
         showMessage(error.message, true);
-        logMessage(error.message, true);
+        showMessage(error.message, true);
         loginButton.disabled = false;
         loginButton.textContent = "Giriş Yap";
     });

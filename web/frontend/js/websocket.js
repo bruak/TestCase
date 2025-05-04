@@ -3,17 +3,26 @@ let statusCheckInterval;
 
 // Sayfanın yüklenme anında çalışacak fonksiyon
 document.addEventListener('DOMContentLoaded', function() {
+  // Token kontrolü
+  const token = localStorage.getItem('jwt_token');
+  const username = localStorage.getItem('username');
+
   // Başlangıçta sunucu durumunu kontrol et ve düzenli aralıklarla tekrarla
   checkServerStatus();
   // Her 1 saniyede bir sunucu durumunu kontrol et
   statusCheckInterval = setInterval(checkServerStatus, 100000);
+
+  if (token && username) {
+    connectSocket();
+  } else if (localStorage.getItem('socket_connect_flag') === 'true') {
+    localStorage.removeItem('socket_connect_flag');
+    connectSocket();
+  }
 });
 
-// Sunucu durumunu kontrol eden fonksiyon
 function checkServerStatus() {
   const url = "https://localhost:5000";
   
-  // Sunucu bağlantısı test ediliyor
   fetch(url, { 
     method: 'GET'
   })
@@ -21,12 +30,10 @@ function checkServerStatus() {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    // Sunucu çalışıyor, durumu güncelle
     updateServerStatus(true);
     return response;
   })
   .catch(error => {
-    // Sunucu çalışmıyor, durumu güncelle
     updateServerStatus(false);
     console.error("Server connection test failed:", error);
   });
@@ -35,6 +42,11 @@ function checkServerStatus() {
 // Sunucu durumu göstergesini güncelle
 function updateServerStatus(isOnline) {
   const statusElem = document.getElementById("serverStatus");
+  if (!statusElem) {
+    // Eğer element yoksa (örneğin login sayfasındayız) sessizce çık
+    console.log("Server status element not found, skipping update");
+    return;
+  }
   if (isOnline) {
     statusElem.className = "server-status server-online";
     statusElem.textContent = "Sunucu Çalışıyor";
@@ -48,6 +60,11 @@ function logMessage(msg, isError = false) {
   const logBox = document.getElementById("log");
   const timestamp = new Date().toISOString().substring(11, 19);
   let message = `[${timestamp}] ${msg}`;
+
+  if (!logBox) {
+    console.error(msg);
+    return;
+  }
   
   if (isError) {
     message = `[${timestamp}] ERROR: ${msg}`;
@@ -61,53 +78,28 @@ function clearLog() {
   document.getElementById("log").textContent = "";
 }
 
+function connectSocket() {
+  let token = localStorage.getItem('jwt_token');
+  let username = localStorage.getItem('username');
 
-
-function connectSocket() { // ! ITS FOR TESTING
-  let token = document.getElementById("token").value;
-  let username = document.getElementById("username").value;
   
-  // If token or username is missing, use the saved token
   if (!token || !username) {
-    // Load the predefined token and extract username
-    const tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNzQ2Mzc0NzQ5LCJpYXQiOjE3NDYyODgzNDksInVzZXJfaWQiOjEyfQ.YqymYpVWg7laFLV6Cb7c1c9V980PD2Tq0F3hU0WE4hk";
-    
-    if (!token) {
-      token = tokenValue;
-      document.getElementById("token").value = token;
-      logMessage("Using default token");
-    }
-    
-    if (!username) {
-      try {
-        // Decode token payload (2nd part of JWT)
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.username) {
-          username = payload.username;
-          document.getElementById("username").value = username;
-          logMessage(`Using username from token: ${username}`);
-        } else {
-          logMessage("Username not found in token", true);
-          return;
-        }
-      } catch (error) {
-        logMessage(`Error parsing token: ${error.message}`, true);
-        return;
-      }
-    }
+    logMessage("Oturum bilgisi bulunamadı. Lütfen giriş yapın.", true);
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1500);
+    return;
   }
 
-  logMessage("Connecting to WebSocket server...");
+  logMessage(`${username} kullanıcısı için WebSocket bağlantısı kuruluyor...`);
   
   const url = "https://localhost:5000";
   
   try {
-    // Close any existing connection
     if (socket) {
       socket.disconnect();
     }
     
-    // Create new connection
     socket = io(url, {
       auth: {
         token: token
@@ -116,54 +108,59 @@ function connectSocket() { // ! ITS FOR TESTING
       secure: true
     });
 
-    // Register connection events
     socket.on("connect", () => {
-      logMessage("WebSocket connection established!");
+      logMessage("WebSocket bağlantısı kuruldu!");
       updateServerStatus(true);
       
-      // Register user after connection
       socket.emit("register_user", {
         token: token,
         username: username
       });
       
-      logMessage(`Sent register_user event for: ${username}`);
+      logMessage(`${username} için register_user olayı gönderildi`);
     });
 
     socket.on("response", (data) => {
-      logMessage(`RESPONSE: ${JSON.stringify(data)}`);
+      logMessage(`YANIT: ${JSON.stringify(data)}`);
     });
 
     socket.on("user_status", (data) => {
-      logMessage(`USER STATUS: ${JSON.stringify(data)}`);
+      logMessage(`KULLANICI DURUMU: ${JSON.stringify(data)}`);
     });
     
     socket.on("user_count", (data) => {
-      logMessage(`USER COUNT: ${data.count} users online`);
+      logMessage(`ÇEVRİMİÇİ KULLANICI: ${data.count} kullanıcı aktif`);
     });
     
     socket.on("connection_slots", (data) => {
-      logMessage(`CONNECTION SLOTS: ${JSON.stringify(data)}`);
+      logMessage(`BAĞLANTI SLOTLARI: ${JSON.stringify(data)}`);
     });
 
     socket.on("disconnect", () => {
-      logMessage("WebSocket disconnected");
+      logMessage("WebSocket bağlantısı kesildi");
     });
 
     socket.on("connect_error", (err) => {
-      logMessage(`Connection error: ${err.message}`, true);
+      logMessage(`Bağlantı hatası: ${err.message}`, true);
     });
 
     socket.on("error", (err) => {
-      logMessage(`Socket error: ${err.message}`, true);
+      logMessage(`Socket hatası: ${err.message}`, true);
     });
     
     socket.on("debug_info", (data) => {
-      logMessage(`DEBUG INFO: ${JSON.stringify(data, null, 2)}`);
+      logMessage(`HATA AYIKLAMA BİLGİSİ: ${JSON.stringify(data, null, 2)}`);
     });
     
     socket.on("force_disconnect", (data) => {
-      logMessage(`Forced disconnect: ${JSON.stringify(data)}`);
+      logMessage(`Zorunlu bağlantı kesme: ${JSON.stringify(data)}`);
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('user_id');
+      
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
     });
     
     socket.on("pong_manual", (data) => {
@@ -171,11 +168,11 @@ function connectSocket() { // ! ITS FOR TESTING
     });
     
     socket.on("online_users", (data) => {
-      logMessage(`ONLINE USERS: ${JSON.stringify(data)}`);
+      logMessage(`ÇEVRİMİÇİ KULLANICILAR: ${JSON.stringify(data)}`);
     });
     
   } catch (err) {
-    logMessage(`Error creating connection: ${err.message}`, true);
+    logMessage(`Bağlantı oluşturma hatası: ${err.message}`, true);
   }
 }
 
@@ -183,6 +180,7 @@ function disconnectSocket() {
   if (socket) {
     logMessage("Disconnecting from WebSocket server...");
     socket.disconnect();
+    logOut();
   } else {
     logMessage("No active connection to disconnect", true);
   }
@@ -232,27 +230,63 @@ function testConnection() {
   });
 }
 
-function savedToken() {
-    // Predefined token for user2
-    const tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIiwiZXhwIjoxNzQ2Mzc0NzQ5LCJpYXQiOjE3NDYyODgzNDksInVzZXJfaWQiOjEyfQ.YqymYpVWg7laFLV6Cb7c1c9V980PD2Tq0F3hU0WE4hk";
-    
-    // Fill the token field
-    document.getElementById("token").value = tokenValue;
-    
-    // Extract username from token and fill the username field
-    try {
-        // Decode token payload (2nd part of JWT)
-        const payload = JSON.parse(atob(tokenValue.split('.')[1]));
-        if (payload.username) {
-            document.getElementById("username").value = payload.username;
-            logMessage(`Username auto-filled from token: ${payload.username}`);
-        }
-    } catch (error) {
-        console.error("Error parsing token:", error);
+function logOut() {
+  logMessage("Oturum kapatılıyor...");
+  
+  // Token'ı localStorage'dan alalım
+  const token = localStorage.getItem('jwt_token');
+  
+  if (!token) {
+    logMessage("Oturum bilgisi bulunamadı", true);
+    window.location.href = '/';
+    return;
+  }
+  
+  // Sunucuya logout isteği gönderelim
+  fetch(`https://localhost:5000/logout?token=${encodeURIComponent(token)}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      token: token,
+      username: localStorage.getItem('username')
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Çıkış başarısız: ${response.status}`);
     }
+    return response.json();
+  })
+  .then(data => {
+    logMessage(`Sunucu yanıtı: ${data.message}`);
     
-    logMessage("Default token loaded automatically");
+    // LocalStorage'dan kullanıcı verilerini temizleyelim
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('socket_connect_flag'); // Also clean up this flag
     
-    // Automatically connect using this token
-    connectSocket();
+    logMessage("Çıkış başarılı! Login sayfasına yönlendiriliyorsunuz...");
+    
+    // Login sayfasına yönlendir
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1500);
+  })
+  .catch(error => {
+    logMessage(`Çıkış işlemi sırasında hata: ${error.message}`, true);
+    // Hata oluşsa bile kullanıcıyı çıkış yapmış sayalım ve login sayfasına yönlendirelim
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('socket_connect_flag');
+    
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1500);
+  });
 }
+

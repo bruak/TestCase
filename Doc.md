@@ -75,9 +75,9 @@ Bu değişiklikler uygulamanızı daha güvenli hale getirecek ve sorunları dah
 
 
 TODO
-Login kısmı yapılacak ve jwt kontrol edilecek sonrasında oto şekilde bağlantı kurulacak websocketle, blacklist gibi durumların çalışıp çalışmadığı kontrol edilecek.,
 
 .......
+disconnect ve logout durumlarında çıkış yapılması gerekiyor ve JWT token geçersiz olarak işaretlenmeli.
 
 kalan kullanıcı listesi frontend tarafında gösteilecek 
 veriler tamamen backend'den çekilecek her türlü durum testti yapılacak.
@@ -87,6 +87,14 @@ docker secret kullanılabilir
 
 
 kullanıcı çıkış yaptıktan sonra JWT token iptal edilecek, bu zaten var. Websocketi kapatınca da iptal olacak.
+
+en son dökümantasyon yapılırken websocket.js üzerindeki eventler izlenebilir.
+
+
+TESTLER
+aynı kullanıcıdan girişi
+postman ile giriş ve geçersiz JWT testi.
+
 .......
 
 GitHub Copilot: # Flask WebSocket Uygulaması Teknik Dokümantasyonu

@@ -1,8 +1,8 @@
-from flask import jsonify, request, send_from_directory
+from flask import jsonify, request, send_from_directory, render_template, redirect
 from db import create_app
 from websocket import websocket_init
 import os
-import auth
+from auth import token_required
 from dotenv import find_dotenv, dotenv_values
 
 app = create_app()
@@ -16,9 +16,15 @@ def serve_frontend(path):
 
 @app.route('/', methods=['GET'])
 def root():
+    return send_from_directory('.', 'frontend/html/login.html')
+
+
+
+@app.route('/socket', methods=['GET'])
+@token_required
+def serve_testpage(current_user):
     return send_from_directory('.', 'frontend/html/websockettest.html')
 
-# Initialize WebSocket after configuring app routes
 socketio = websocket_init()  # WEBSOCKET
 
 # .env configuration check
@@ -47,4 +53,6 @@ if __name__ == '__main__':
     # else:
     #     print("SSL certificate or key not found. Running without HTTPS. CONTACT YOUR IT ADMIN")
     #     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+
+
 

@@ -16,24 +16,12 @@
       </div>
     </div>
     
-    <div id="connection" class="tab-content active">
-      <div class="form-group">
-        <label for="token">JWT Token:</label>
-        <textarea id="token" rows="4" cols="50" placeholder="Paste your JWT token here"></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" placeholder="e.g., user1">
-      </div>
-      
-      <button onclick="connectSocket()">Connect & Register</button>
       <button onclick="disconnectSocket()" style="background-color: #dc3545;">Disconnect</button>
 
       <div class="form-group" style="margin-top: 20px;">
         <label>Quick Commands:</label>
-        <button onclick="pingServer()">Ping Server</button> <!-- bu çalışmıyor -->
-        <button onclick="getUserList()">Get User List</button> <!-- bu çalışmıyor -->
+        <button onclick="pingServer()">Ping Server</button>
+        <button onclick="getUserList()">Get User List</button>
         <button onclick="clearLog()">Clear Log</button>
         <button onclick="testConnection()">Test Connection</button>
       </div>
