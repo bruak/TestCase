@@ -1,15 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    const token = localStorage.getItem('jwt_token');
-    const username = localStorage.getItem('username');
-    
-    if (token && username) {
-        showMessage("Aktif oturumunuz bulunuyor, WebSocket Test sayfasına yönlendiriliyorsunuz...");
-        setTimeout(() => {
-            window.location.href = '/socket';
-        }, 1500);
-    }
-    
     document.getElementById('password').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             login();

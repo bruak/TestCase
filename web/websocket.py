@@ -13,7 +13,7 @@ JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':DDD')
 
 connected_users = {}
 
-MAX_CONNECTIONS = 3
+MAX_CONNECTIONS = 2
 
 def authenticated_only(f):
     @wraps(f)
@@ -225,12 +225,6 @@ def websocket_init():
             print(f"Returning online users-------------->: {online_users}")
             emit('online_users', {'users': online_users, 'count': len(online_users)})
     get_online_users.authenticated = True
-    
-    @socketio.on('authenticated_message')
-    @authenticated_only
-    def handle_authenticated_message(data):
-        print(f"Received authenticated message: {data}")
-        emit('response', {'message': 'Received your authenticated message', 'data': data})
     
     @socketio.on('ping_manual')
     def handle_ping():

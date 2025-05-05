@@ -10,7 +10,6 @@ JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', ':D')
 JWT_EXPIRATION_DELTA = timedelta(hours=24)
 
 BLACKLISTED_TOKENS = set()
-
 USER_TOKENS = {}
 
 def is_token_blacklisted(token):

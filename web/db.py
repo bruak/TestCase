@@ -1,5 +1,5 @@
 from createapp import *
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
 from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 

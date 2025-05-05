@@ -1,15 +1,11 @@
 let socket;
 let statusCheckInterval;
 
-// Sayfanın yüklenme anında çalışacak fonksiyon
 document.addEventListener('DOMContentLoaded', function() {
-  // Token kontrolü
   const token = localStorage.getItem('jwt_token');
   const username = localStorage.getItem('username');
 
-  // Başlangıçta sunucu durumunu kontrol et ve düzenli aralıklarla tekrarla
   checkServerStatus();
-  // Her 1 saniyede bir sunucu durumunu kontrol et
   statusCheckInterval = setInterval(checkServerStatus, 100000);
 
   if (token && username) {
@@ -39,11 +35,9 @@ function checkServerStatus() {
   });
 }
 
-// Sunucu durumu göstergesini güncelle
 function updateServerStatus(isOnline) {
   const statusElem = document.getElementById("serverStatus");
   if (!statusElem) {
-    // Eğer element yoksa (örneğin login sayfasındayız) sessizce çık
     console.log("Server status element not found, skipping update");
     return;
   }
@@ -78,7 +72,6 @@ function clearLog() {
   document.getElementById("log").textContent = "";
 }
 
-// Add these functions to update the connection statistics
 function updateConnectionStats(data) {
   document.getElementById('remainingSlots').textContent = data.remaining_slots;
   document.getElementById('connectionLimits').textContent = data.connection_limits;
@@ -172,7 +165,7 @@ function connectSocket() {
     });
     
     socket.on("user_count", (data) => {
-      logMessage(`ÇEVRİMİÇİ KULLANICI: ${data.count} kullanıcı aktif`);
+      logMessage(`ÇEVRİMİÇİ KULLANICI SAYISI: ${data.count} kullanıcı aktif`);
     });
     
     socket.on("connection_slots", (data) => {
@@ -192,9 +185,6 @@ function connectSocket() {
       logMessage(`Socket hatası: ${err.message}`, true);
     });
     
-    socket.on("debug_info", (data) => {
-      logMessage(`HATA AYIKLAMA BİLGİSİ: ${JSON.stringify(data, null, 2)}`);
-    });
     
     socket.on("force_disconnect", (data) => {
       logMessage(`Zorunlu bağlantı kesme: ${JSON.stringify(data)}`);
@@ -311,22 +301,19 @@ function logOut() {
   .then(data => {
     logMessage(`Sunucu yanıtı: ${data.message}`);
     
-    // LocalStorage'dan kullanıcı verilerini temizleyelim
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('username');
     localStorage.removeItem('user_id');
-    localStorage.removeItem('socket_connect_flag'); // Also clean up this flag
+    localStorage.removeItem('socket_connect_flag');
     
     logMessage("Çıkış başarılı! Login sayfasına yönlendiriliyorsunuz...");
     
-    // Login sayfasına yönlendir
     setTimeout(() => {
       window.location.href = '/';
     }, 1500);
   })
   .catch(error => {
     logMessage(`Çıkış işlemi sırasında hata: ${error.message}`, true);
-    // Hata oluşsa bile kullanıcıyı çıkış yapmış sayalım ve login sayfasına yönlendirelim
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('username');
     localStorage.removeItem('user_id');

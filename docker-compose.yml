@@ -9,6 +9,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - FLASK_APP=app.py
-      - FLASK_ENV=development
+      #- FLASK_ENV=development
       - EVENTLET_NO_GREENDNS=YES
-    #restart: always
+    restart: always

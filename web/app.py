@@ -1,11 +1,11 @@
-from flask import jsonify, request, send_from_directory, render_template, redirect
+from flask import send_from_directory
 from db import create_app
 from websocket import websocket_init
 import os
 from auth import token_required
 from dotenv import find_dotenv, dotenv_values
 
-# * Flask app ve DB. 
+# * Flask app ve DB başlatır. 
 app = create_app()
 
 app.static_folder = None
@@ -15,10 +15,12 @@ def serve_frontend(path):
     frontend_dir = os.path.join(os.path.dirname(__file__), 'frontend')
     return send_from_directory(frontend_dir, path)
 
+# * Login sayfası.
 @app.route('/', methods=['GET'])
 def root():
     return send_from_directory('.', 'frontend/html/login.html')
 
+# * Dekaratör ile token kontrolü yapılır. Login aşamasından sonra yönelndirilir.
 @app.route('/socket', methods=['GET'])
 @token_required
 def serve_testpage(current_user):
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     key_exists = os.path.exists(key_path)
     
     if cert_exists and key_exists:
-        print("Starting with HTTPS support (self-signed certificate)")
+        print("Starting with HTTPS support (self-signed certificate) ✓")
         socketio.run(app, host='0.0.0.0', port=5000, debug=True, 
                     certfile=cert_path, keyfile=key_path)
     # ! sertifikalarda sorun çıkarsa eğer HTTP ile başlanır.
